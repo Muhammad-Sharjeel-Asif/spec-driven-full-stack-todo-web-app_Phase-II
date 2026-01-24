@@ -1,55 +1,76 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!-- Sync Impact Report:
+Version change: 0.0.0 → 1.0.0
+Modified principles: None
+Added sections: Security-First Approach, Modularity and Separation of Concerns, Scalability and Performance Optimization, Maintainability and Readability, Frontend Standards, Backend Standards, Database Standards, Authentication Standards, Testing Standards, Code Quality. Constraints, Success Criteria.
+Removed sections: None
+Templates requiring updates:
+- .specify/templates/plan-template.md: ✅ updated
+- .specify/templates/spec-template.md: ✅ updated
+- .specify/templates/tasks-template.md: ✅ updated
+- .specify/templates/commands/sp.constitution.md: ✅ updated
+- .specify/templates/commands/sp.adr.md: ✅ updated
+- .specify/templates/commands/sp.analyze.md: ✅ updated
+- .specify/templates/commands/sp.checklist.md: ✅ updated
+- .specify/templates/commands/sp.clarify.md: ✅ updated
+- .specify/templates/commands/sp.implement.md: ✅ updated
+- .specify/templates/commands/sp.plan.md: ✅ updated
+- .specify/templates/commands/sp.phr.md: ✅ updated
+- .specify/templates/commands/sp.reverse-engineer.md: ✅ updated
+- .specify/templates/commands/sp.specify.md: ✅ updated
+- .specify/templates/commands/sp.taskstoissues.md: ✅ updated
+Follow-up TODOs: None
+-->
+# Phase II Todo Full-Stack Web Application Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Security-First Approach
+Prioritize security with user data isolation and JWT-based authentication. All operations MUST be filtered by authenticated user ID, ensuring no global data access. If a user is not logged in, they can view the entire website but CANNOT perform any TODO operation.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Modularity and Separation of Concerns
+Maintain clear separation between frontend, backend, and database components to promote independent development and reduce coupling.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### Scalability and Performance Optimization
+Design for multi-user environments, ensuring the application is scalable and performs efficiently. API endpoints MUST be secure and responsive. The application MUST pass performance benchmarks (e.g., load times under 2s).
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Maintainability and Readability
+Emphasize clean, readable code and comprehensive documentation to facilitate long-term maintenance and onboarding of new developers.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### Frontend Standards
+Implement responsive design with Next.js App Router, ensure accessibility (WCAG 2.1 compliance), and adhere to state management best practices. Technology stack: Next.js 16+.
 
-### [PRINCIPLE_6_NAME]
+### Backend Standards
+Design RESTful APIs with FastAPI, use input validation via Pydantic/SQLModel, and apply async operations where applicable. Technology stack: FastAPI, SQLModel (ORM).
 
+### Database Standards
+Utilize a normalized schema in PostgreSQL, employ indexes for frequent queries, and manage migrations with Alembic. Technology stack: Neon Serverless PostgreSQL.
 
-[PRINCIPLE__DESCRIPTION]
+### Authentication Standards
+Implement JWT token verification on all endpoints and manage shared secrets securely via environment variables. Technology stack: Better Auth.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### Testing Standards
+Achieve a minimum of 80% code coverage with unit tests (Jest for frontend, Pytest for backend) and include integration tests for API flows.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Code Quality
+Enforce TypeScript for frontend, mypy typing for backend, and linting with ESLint/Flake8.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Constraints
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+*   Technology stack: Next.js 16+ (frontend), FastAPI (backend), SQLModel (ORM), Neon Serverless PostgreSQL (database), Better Auth (authentication).
+*   Multi-user support: All operations filtered by authenticated user ID, no global data access.
+*   If user is not logged in, he can view the entire website but cannot perform any TODO operation.
+*   Environment: Use .env files for secrets, HTTPS enforcement in production.
+*   Deployment: Compatible with Vercel (frontend) and cloud platforms like Render/huggingface (backend).
+
+## Success Criteria
+
+*   All 5 basic Todo features implemented as web app with persistent storage.
+*   User authentication and isolation verified through end-to-end testing.
+*   API endpoints secure and responsive, with no unauthorized access.
+*   Application passes performance benchmarks (e.g., load times under 2s).
+*   Full review of prompts, plans, tasks, and iterations shows adherence to spec-driven process.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+This Constitution supersedes all other practices and documentation. Amendments require thorough documentation, approval by core stakeholders, and a clear migration plan for affected systems. All Pull Requests and code reviews MUST verify compliance with these principles. Technical complexity MUST be justified by clear business value or critical non-functional requirements.
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
-
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-01-24 | **Last Amended**: 2026-01-24
