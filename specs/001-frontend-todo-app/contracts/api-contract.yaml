@@ -1,0 +1,213 @@
+# API Contract: Taskify Frontend-Backend Integration
+
+## Authentication Endpoints
+
+### POST /api/auth/signup
+Register a new user account
+- Request body:
+  ```typescript
+  {
+    email: string,
+    password: string,
+    name: string
+  }
+  ```
+- Response (200):
+  ```typescript
+  {
+    user: {
+      id: string,
+      email: string,
+      name: string
+    },
+    token: string
+  }
+  ```
+- Error responses: 400 (validation), 409 (email exists)
+
+### POST /api/auth/signin
+Authenticate existing user
+- Request body:
+  ```typescript
+  {
+    email: string,
+    password: string
+  }
+  ```
+- Response (200):
+  ```typescript
+  {
+    user: {
+      id: string,
+      email: string,
+      name: string
+    },
+    token: string
+  }
+  ```
+- Error responses: 400 (validation), 401 (invalid credentials)
+
+### POST /api/auth/signout
+End user session
+- Headers: Authorization: Bearer {token}
+- Response (200): {}
+- Error responses: 401 (invalid token)
+
+## Task Management Endpoints
+
+### GET /api/users/{userId}/tasks
+Retrieve all tasks for authenticated user
+- Headers: Authorization: Bearer {token}
+- Query parameters:
+  - filter?: 'all' | 'active' | 'completed'
+  - sortBy?: 'dueDate' | 'createdAt' | 'updatedAt'
+  - sortOrder?: 'asc' | 'desc'
+- Response (200):
+  ```typescript
+  {
+    tasks: Array<{
+      id: string,
+      title: string,
+      description?: string,
+      completed: boolean,
+      dueDate?: string,
+      createdAt: string,
+      updatedAt: string,
+      userId: string
+    }>
+  }
+  ```
+- Error responses: 401 (unauthorized), 403 (access denied), 404 (user not found)
+
+### POST /api/users/{userId}/tasks
+Create a new task for authenticated user
+- Headers: Authorization: Bearer {token}
+- Request body:
+  ```typescript
+  {
+    title: string,
+    description?: string,
+    dueDate?: string // ISO 8601 format
+  }
+  ```
+- Response (201):
+  ```typescript
+  {
+    id: string,
+    title: string,
+    description?: string,
+    completed: boolean,
+    dueDate?: string,
+    createdAt: string,
+    updatedAt: string,
+    userId: string
+  }
+  ```
+- Error responses: 400 (validation), 401 (unauthorized), 403 (access denied)
+
+### GET /api/users/{userId}/tasks/{taskId}
+Retrieve a specific task
+- Headers: Authorization: Bearer {token}
+- Response (200):
+  ```typescript
+  {
+    id: string,
+    title: string,
+    description?: string,
+    completed: boolean,
+    dueDate?: string,
+    createdAt: string,
+    updatedAt: string,
+    userId: string
+  }
+  ```
+- Error responses: 401 (unauthorized), 403 (access denied), 404 (task not found)
+
+### PUT /api/users/{userId}/tasks/{taskId}
+Update an existing task
+- Headers: Authorization: Bearer {token}
+- Request body:
+  ```typescript
+  {
+    title?: string,
+    description?: string,
+    completed?: boolean,
+    dueDate?: string
+  }
+  ```
+- Response (200):
+  ```typescript
+  {
+    id: string,
+    title: string,
+    description?: string,
+    completed: boolean,
+    dueDate?: string,
+    createdAt: string,
+    updatedAt: string,
+    userId: string
+  }
+  ```
+- Error responses: 400 (validation), 401 (unauthorized), 403 (access denied), 404 (task not found)
+
+### PATCH /api/users/{userId}/tasks/{taskId}
+Partially update a task (commonly used for toggling completion)
+- Headers: Authorization: Bearer {token}
+- Request body:
+  ```typescript
+  {
+    completed: boolean
+  }
+  ```
+- Response (200):
+  ```typescript
+  {
+    id: string,
+    title: string,
+    description?: string,
+    completed: boolean,
+    dueDate?: string,
+    createdAt: string,
+    updatedAt: string,
+    userId: string
+  }
+  ```
+- Error responses: 400 (validation), 401 (unauthorized), 403 (access denied), 404 (task not found)
+
+### DELETE /api/users/{userId}/tasks/{taskId}
+Delete a task
+- Headers: Authorization: Bearer {token}
+- Response (204): No content
+- Error responses: 401 (unauthorized), 403 (access denied), 404 (task not found)
+
+## Error Response Format
+
+All error responses follow this format:
+```typescript
+{
+  error: {
+    code: string,
+    message: string,
+    details?: Array<{
+      field: string,
+      message: string
+    }>
+  }
+}
+```
+
+## Authentication Headers
+
+All authenticated endpoints require:
+- `Authorization: Bearer {jwt_token}`
+
+## Expected HTTP Status Codes
+
+- 200: Success (GET, PUT, PATCH)
+- 201: Created (POST)
+- 204: No Content (DELETE)
+- 400: Bad Request (validation errors)
+- 401: Unauthorized (missing or invalid token)
+- 403: Forbidden (access denied)
+- 404: Not Found (resource not found)
+- 500: Internal Server Error

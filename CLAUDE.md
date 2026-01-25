@@ -113,7 +113,27 @@ You are not expected to solve every problem autonomously. You MUST invoke the us
 1.  **Ambiguous Requirements:** When user intent is unclear, ask 2-3 targeted clarifying questions before proceeding.
 2.  **Unforeseen Dependencies:** When discovering dependencies not mentioned in the spec, surface them and ask for prioritization.
 3.  **Architectural Uncertainty:** When multiple valid approaches exist with significant tradeoffs, present options and get user's preference.
-4.  **Completion Checkpoint:** After completing major milestones, summarize what was done and confirm next steps. 
+4.  **Completion Checkpoint:** After completing major milestones, summarize what was done and confirm next steps.
+
+### 6. Specialized Agents and Skills Usage
+
+To efficiently tackle complex software engineering tasks, leverage the following specialized agents and skills:
+
+- **architecture-planner**: Use for high-level architectural design, planning, or documentation, especially for defining system structure, data flow, authentication flows, database schemas, or updating `architecture.md`.
+- **auth-agent**: Employ for implementing user authentication systems, securing API endpoints, managing user sessions, or integrating authentication providers like Better Auth.
+- **backend-developer**: Utilize for building FastAPI endpoints, SQLModel database models, and Python backend services, including authentication integration with Better Auth JWT.
+- **constitution-spec-editor**: Invoke when `sp.analyze` identifies constitutional alignment issues in feature specifications that need resolution by editing the spec for compliance.
+- **Explore**: Use for fast codebase exploration, finding files by patterns, searching code for keywords, or answering questions about the codebase.
+- **fastapi-developer**: Use when creating or modifying FastAPI REST API endpoints, implementing authentication/authorization, designing database models with SQLAlchemy, or debugging API issues.
+- **frontend-nextjs-developer**: Deploy when building new UI pages or layouts from scratch, converting designs to Next.js components, creating responsive navigation, forms, or setting up new App Router routes.
+- **integration-tester**: Activate when both backend and frontend development tasks for a feature are complete and end-to-end system verification is required.
+- **neon-postgresql-operator**: Apply when working with Neon Serverless PostgreSQL database operations, such as schema design, query optimization, migration planning, or connection management.
+- **Plan**: Use for designing implementation plans, outlining step-by-step strategies, identifying critical files, and considering architectural trade-offs.
+- **spec-writer**: Employ for creating feature specs, API specs, database schemas, and UI specs following Spec-Kit Plus conventions.
+- **task-auditor**: Launch when implementation work is done and a thorough verification is needed to ensure all planned tasks and specification requirements are fully, correctly, and robustly implemented.
+- **testing-verification-agent**: Invoke after implementation work is complete to verify the correctness, stability, and reliability of the code before deployment or further development.
+- **Skills**: For domain-specific knowledge and specialized workflows (e.g., `better-auth-best-practices`, `frontend-design`, `mcp-builder`, `nextjs-app-router-patterns`, `nextjs-best-practices`, `postgresql-table-design`, `senior-frontend`, `skill-creator`, `sql-optimization-patterns`, `tailwind-design-system`, `ui-ux-pro-max`, `using-neon`, `webapp-testing`), use the `Skill` tool directly.
+
 
 ## Default policies (must follow)
 - Clarify and plan first - keep business understanding separate from technical plan and carefully architect and implement.
@@ -208,3 +228,10 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Active Technologies
+- TypeScript 5.0+, JavaScript ES2022 + Next.js 16+, React 18+, Better Auth, Tailwind CSS, Jest, React Testing Library (001-frontend-todo-app)
+- Browser localStorage/sessionStorage for session management, API-driven for task data (001-frontend-todo-app)
+
+## Recent Changes
+- 001-frontend-todo-app: Added TypeScript 5.0+, JavaScript ES2022 + Next.js 16+, React 18+, Better Auth, Tailwind CSS, Jest, React Testing Library
