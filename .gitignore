@@ -1,1 +1,38 @@
 .agents
+
+# Python
+venv/
+backend/venv/
+__pycache__/
+*.pyc
+
+# Claude / MCP
+# .claude/
+# .claude/**
+
+# Environment files
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+.claude/skills/better-auth-best-practices/
+.claude/skills/context7/
+.claude/skills/fastapi-templates/
+.claude/skills/frontend-design/
+.claude/skills/nextjs-app-router-patterns/
+.claude/skills/nextjs-best-practices/
+.claude/skills/postgresql-table-design/
+.claude/skills/senior-frontend/
+.claude/skills/sql-optimization-patterns/
+.claude/skills/tailwind-design-system/
+.claude/skills/ui-ux-pro-max/
+.claude/skills/using-neon/
+.claude/skills/webapp-testing/
+
+backend/venv/bin/python
