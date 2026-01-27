@@ -35,4 +35,4 @@ Thumbs.db
 .claude/skills/using-neon/
 .claude/skills/webapp-testing/
 
-backend/venv/bin/python
+# backend/venv/bin/python
