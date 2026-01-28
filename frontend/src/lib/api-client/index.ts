@@ -61,26 +61,26 @@ class ApiClient {
   }
 
   // Specific API methods for tasks
-  async getTasks(userId: string, filters?: any) {
+  async getTasks(filters?: any) {
     const queryString = new URLSearchParams(filters).toString();
-    const url = `/api/users/${userId}/tasks${queryString ? '?' + queryString : ''}`;
+    const url = `/api/v1/tasks${queryString ? '?' + queryString : ''}`;
     return this.get(url);
   }
 
-  async createTask(userId: string, data: any) {
-    return this.post(`/api/users/${userId}/tasks`, data);
+  async createTask(data: any) {
+    return this.post('/api/v1/tasks', data);
   }
 
-  async updateTask(userId: string, taskId: string, data: any) {
-    return this.put(`/api/users/${userId}/tasks/${taskId}`, data);
+  async updateTask(taskId: string, data: any) {
+    return this.put(`/api/v1/tasks/${taskId}`, data);
   }
 
-  async patchTask(userId: string, taskId: string, data: any) {
-    return this.patch(`/api/users/${userId}/tasks/${taskId}`, data);
+  async patchTask(taskId: string, data: any) {
+    return this.patch(`/api/v1/tasks/${taskId}`, data);
   }
 
-  async deleteTask(userId: string, taskId: string) {
-    return this.delete(`/api/users/${userId}/tasks/${taskId}`);
+  async deleteTask(taskId: string) {
+    return this.delete(`/api/v1/tasks/${taskId}`);
   }
 
   // Specific API methods for authentication

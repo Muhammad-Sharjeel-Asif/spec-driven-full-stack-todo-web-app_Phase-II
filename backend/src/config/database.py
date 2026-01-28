@@ -21,8 +21,40 @@ if os.environ.get('RUNNING_ALEMBIC_MIGRATION'):
 else:
     # Convert string settings to appropriate types for database connection
     db_echo_bool = settings.DB_ECHO.lower() == "true"
+
+    # Convert database URL to asyncpg format if using PostgreSQL
+    database_url = settings.DATABASE_URL
+    if database_url.startswith("postgresql://"):
+        database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    elif database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql+asyncpg://", 1)
+
+    # Parse URL and handle asyncpg-specific SSL settings
+    from urllib.parse import urlparse, parse_qs, urlencode
+    parsed = urlparse(database_url)
+
+    # Extract query parameters and handle SSL settings for asyncpg
+    query_params = parse_qs(parsed.query)
+    ssl_params = {}
+
+    # Handle sslmode specially for asyncpg
+    if 'sslmode' in query_params:
+        sslmode = query_params.pop('sslmode')[0]
+        # asyncpg uses ssl parameter instead of sslmode
+        if sslmode.lower() in ['require', 'prefer']:
+            ssl_params['ssl'] = True
+        elif sslmode.lower() == 'disable':
+            ssl_params['ssl'] = False
+
+    # Remove channel_binding parameter as it's not supported by asyncpg
+    query_params.pop('channel_binding', None)
+
+    # Reconstruct the URL without problematic parameters for asyncpg
+    new_query = urlencode(query_params, doseq=True)
+    database_url = parsed._replace(query=new_query).geturl()
+
     engine: AsyncEngine = create_async_engine(
-        settings.DATABASE_URL,
+        database_url,
         echo=db_echo_bool,  # Set to True in settings to enable SQL logging
         pool_size=int(settings.DB_POOL_SIZE),
         max_overflow=int(settings.DB_MAX_OVERFLOW),
@@ -32,7 +64,8 @@ else:
         connect_args={
             "server_settings": {
                 "application_name": "todo-backend-api",
-            }
+            },
+            **ssl_params
         }
     )
 

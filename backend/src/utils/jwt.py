@@ -55,9 +55,9 @@ def decode_access_token(token: str) -> Optional[TokenData]:
             options={"verify_exp": True}
         )
         user_id_str: str = payload.get("sub")
-        username: str = payload.get("username")
+        email: str = payload.get("email")
 
-        if user_id_str is None or username is None:
+        if user_id_str is None or email is None:
             return None
 
         try:
@@ -66,7 +66,7 @@ def decode_access_token(token: str) -> Optional[TokenData]:
             # If user_id is not a valid UUID string, return None
             return None
 
-        token_data = TokenData(user_id=user_id, username=username)
+        token_data = TokenData(user_id=user_id, email=email)
         return token_data
     except ExpiredSignatureError:
         # Token has expired
@@ -150,9 +150,9 @@ def validate_and_decode_token(token: str) -> Optional[TokenData]:
             algorithms=["HS256"]  # Better Auth typically uses HS256
         )
         user_id_str: str = payload.get("sub")
-        username: str = payload.get("username")
+        email: str = payload.get("email")
 
-        if user_id_str is None or username is None:
+        if user_id_str is None or email is None:
             raise credentials_exception
 
         try:
@@ -166,7 +166,7 @@ def validate_and_decode_token(token: str) -> Optional[TokenData]:
         if exp_time and datetime.fromtimestamp(exp_time) < datetime.utcnow():
             raise credentials_exception
 
-        token_data = TokenData(user_id=user_id, username=username)
+        token_data = TokenData(user_id=user_id, email=email)
         return token_data
 
     except ExpiredSignatureError:

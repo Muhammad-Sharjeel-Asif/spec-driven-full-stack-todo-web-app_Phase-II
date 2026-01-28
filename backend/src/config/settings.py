@@ -14,15 +14,25 @@ class Settings(BaseSettings):
 
     # Better Auth configuration (for verifying tokens issued by frontend)
     BETTER_AUTH_SECRET: str
+    BETTER_AUTH_URL: str = "http://localhost:3000"
+    NEXT_PUBLIC_BETTER_AUTH_URL: str = "http://localhost:3000"
     # Note: Backend only verifies tokens issued by Better Auth, does not issue its own tokens
 
     # Password hashing configuration
     BCRYPT_ROUNDS: int = 12
 
+    # Token expiration settings (these are referenced in properties but not defined)
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
     # Database configuration additional settings
     DB_ECHO: str = "false"
     # Note: Connection pooling settings are typically managed by Neon for serverless instances
-    # DB_POOL_SIZE, DB_MAX_OVERFLOW, DB_POOL_TIMEOUT, DB_POOL_RECYCLE may not be needed for Neon Serverless
+    # However, the database config file expects these values, so we define them with reasonable defaults
+    DB_POOL_SIZE: int = 5
+    DB_MAX_OVERFLOW: int = 10
+    DB_POOL_TIMEOUT: int = 30
+    DB_POOL_RECYCLE: int = 3600  # 1 hour
 
     # Debug mode
     DEBUG: bool = False

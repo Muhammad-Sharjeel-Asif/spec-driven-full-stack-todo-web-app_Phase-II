@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 import uuid
 from sqlmodel import SQLModel, Field, Relationship
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from .user import User
 
 
@@ -15,6 +15,8 @@ class TaskBase(SQLModel):
     priority: int = Field(default=1, ge=1, le=5)  # 1-5 scale, 1 being lowest priority
     due_date: Optional[datetime] = Field(default=None)
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class Task(TaskBase, table=True):
     """Task model representing a todo item in the database."""
@@ -26,8 +28,8 @@ class Task(TaskBase, table=True):
     version: int = Field(default=1)  # For optimistic locking
 
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
-    updated_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationships
     owner: "User" = Relationship(back_populates="tasks")
@@ -49,7 +51,7 @@ class TaskCreate(TaskBase):
     user_id: uuid.UUID  # Required for creating a task for a specific user
 
 
-class TaskUpdate(BaseModel):
+class TaskUpdate(SQLModel):
     """Schema for updating an existing task."""
 
     title: Optional[str] = Field(default=None, min_length=1, max_length=255)
@@ -57,6 +59,8 @@ class TaskUpdate(BaseModel):
     is_completed: Optional[bool] = None
     priority: Optional[int] = Field(default=None, ge=1, le=5)
     due_date: Optional[datetime] = Field(default=None)
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TaskRead(TaskBase):
@@ -68,3 +72,5 @@ class TaskRead(TaskBase):
     created_at: datetime
     updated_at: datetime
     is_deleted: bool = False  # Soft delete flag
+
+    model_config = ConfigDict(from_attributes=True)

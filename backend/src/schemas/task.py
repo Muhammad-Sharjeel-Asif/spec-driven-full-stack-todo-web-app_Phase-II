@@ -8,7 +8,6 @@ class TaskBase(BaseModel):
     Base schema for Task containing common fields for both creation and updates.
     """
     title: str = Field(
-        ...,
         min_length=1,
         max_length=255,
         description="Task title with 1-255 characters"
@@ -48,18 +47,18 @@ class TaskUpdate(BaseModel):
     All fields are optional to allow partial updates.
     """
     title: Optional[str] = Field(
-        None,
+        default=None,
         min_length=1,
         max_length=255,
         description="Task title with 1-255 characters (optional)"
     )
     description: Optional[str] = Field(
-        None,
+        default=None,
         max_length=1000,
-        description="Optional task description (max 1000 characters)"
+        description="Optional task description (max length 1000 characters)"
     )
     status: Optional[str] = Field(
-        None,
+        default=None,
         pattern=r"^(pending|in_progress|completed|cancelled)$",
         description="Task status: pending, in_progress, completed, or cancelled (optional)"
     )
@@ -120,9 +119,8 @@ class TaskBatchUpdateRequest(BaseModel):
     """
     Schema for batch updating tasks.
     """
-    task_ids: list[int] = Field(..., min_items=1, description="List of task IDs to update")
+    task_ids: list[int] = Field(min_items=1, description="List of task IDs to update")
     status: str = Field(
-        ...,
         pattern=r"^(pending|in_progress|completed|cancelled)$",
         description="New status for all specified tasks"
     )
@@ -145,3 +143,7 @@ class TaskBatchUpdateResponse(BaseModel):
     updated_count: int
     failed_count: int
     message: str
+
+
+# Alias for backward compatibility
+TaskRead = TaskResponse

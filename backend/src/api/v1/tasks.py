@@ -19,7 +19,7 @@ async def create_task(
     current_user: User = Depends(get_current_active_user)
 ):
     """Create a new task"""
-    return await task_service.create_task(task)
+    return await task_service.create_task(task, current_user)
 
 
 @router.get("/tasks/{task_id}", response_model=TaskRead)
@@ -29,7 +29,7 @@ async def get_task(
     current_user: User = Depends(get_current_active_user)
 ):
     """Get a specific task by ID"""
-    task = await task_service.get_task_by_id(task_id)
+    task = await task_service.get_task_by_id(task_id, current_user)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
@@ -43,7 +43,7 @@ async def update_task(
     current_user: User = Depends(get_current_active_user)
 ):
     """Update a specific task by ID"""
-    updated_task = await task_service.update_task(task_id, task_update)
+    updated_task = await task_service.update_task(task_id, task_update, current_user)
     if not updated_task:
         raise HTTPException(status_code=404, detail="Task not found")
     return updated_task
@@ -56,7 +56,7 @@ async def delete_task(
     current_user: User = Depends(get_current_active_user)
 ):
     """Delete a specific task by ID"""
-    deleted = await task_service.delete_task(task_id)
+    deleted = await task_service.delete_task(task_id, current_user)
     if not deleted:
         raise HTTPException(status_code=404, detail="Task not found")
 
@@ -69,4 +69,4 @@ async def get_tasks(
     current_user: User = Depends(get_current_active_user)
 ):
     """Get all tasks with pagination"""
-    return await task_service.get_tasks(skip=skip, limit=limit)
+    return await task_service.get_tasks(skip=skip, limit=limit, current_user=current_user)

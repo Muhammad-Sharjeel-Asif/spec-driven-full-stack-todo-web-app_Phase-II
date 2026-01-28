@@ -16,7 +16,7 @@ export const useTasks = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.getTasks(user.id, filters);
+      const response = await apiClient.getTasks(filters);
       setTasks(response.data);
     } catch (err: any) {
       if (err?.response?.status === 401) {
@@ -41,7 +41,7 @@ export const useTasks = () => {
 
     try {
       setLoading(true);
-      const response = await apiClient.createTask(user.id, taskData);
+      const response = await apiClient.createTask(taskData);
       setTasks(prev => [...prev, response.data]);
       return response.data;
     } catch (err: any) {
@@ -68,7 +68,7 @@ export const useTasks = () => {
 
     try {
       setLoading(true);
-      const response = await apiClient.updateTask(user.id, taskId, taskData);
+      const response = await apiClient.updateTask(taskId, taskData);
       setTasks(prev => prev.map(task => task.id === taskId ? response.data : task));
       return response.data;
     } catch (err: any) {
@@ -99,7 +99,7 @@ export const useTasks = () => {
         task.id === taskId ? { ...task, completed: !task.completed } : task
       ));
 
-      const response = await apiClient.patchTask(user.id, taskId, {
+      const response = await apiClient.patchTask(taskId, {
         completed: !tasks.find(t => t.id === taskId)?.completed
       });
 
@@ -139,7 +139,7 @@ export const useTasks = () => {
     setTasks(prev => prev.filter(task => task.id !== taskId));
 
     try {
-      await apiClient.deleteTask(user.id, taskId);
+      await apiClient.deleteTask(taskId);
     } catch (err: any) {
       // Revert optimistic update on error
       if (deletedTask) {

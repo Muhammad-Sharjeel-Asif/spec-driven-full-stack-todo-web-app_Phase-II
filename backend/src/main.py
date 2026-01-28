@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.api.v1 import tasks
+from src.api.v1 import auth
 from src.config.database import create_db_and_tables
 import uvicorn
 
@@ -21,6 +22,7 @@ async def startup_event():
 
 # Include API routes
 app.include_router(tasks.router, prefix="/api/v1", tags=["tasks"])
+app.include_router(auth.router, prefix="/api/v1", tags=["auth"])
 
 @app.get("/health")
 async def health_check():

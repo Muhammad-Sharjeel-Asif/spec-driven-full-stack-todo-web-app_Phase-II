@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 import re
 import uuid
 
@@ -45,7 +45,7 @@ class RegisterRequest(BaseModel):
         description="Password confirmation"
     )
 
-    @validator('password')
+    @field_validator('password')
     def validate_password_strength(cls, v):
         """
         Validate password strength requirements
@@ -60,12 +60,12 @@ class RegisterRequest(BaseModel):
             raise ValueError('Password must contain at least one special character')
         return v
 
-    @validator('confirm_password')
-    def passwords_match(cls, v, values):
+    @field_validator('confirm_password')
+    def passwords_match(cls, v, info):
         """
         Validate that passwords match
         """
-        if 'password' in values and v != values['password']:
+        if info.data and 'password' in info.data and v != info.data['password']:
             raise ValueError('Passwords do not match')
         return v
 
@@ -146,7 +146,7 @@ class ResetPasswordRequest(BaseModel):
         description="Confirmation of new password"
     )
 
-    @validator('new_password')
+    @field_validator('new_password')
     def validate_new_password_strength(cls, v):
         """
         Validate new password strength requirements
@@ -161,12 +161,12 @@ class ResetPasswordRequest(BaseModel):
             raise ValueError('New password must contain at least one special character')
         return v
 
-    @validator('confirm_new_password')
-    def new_passwords_match(cls, v, values):
+    @field_validator('confirm_new_password')
+    def new_passwords_match(cls, v, info):
         """
         Validate that new passwords match
         """
-        if 'new_password' in values and v != values['new_password']:
+        if info.data and 'new_password' in info.data and v != info.data['new_password']:
             raise ValueError('New passwords do not match')
         return v
 
@@ -201,7 +201,7 @@ class ChangePasswordRequest(BaseModel):
         description="Confirmation of new password"
     )
 
-    @validator('new_password')
+    @field_validator('new_password')
     def validate_new_password_strength_change(cls, v):
         """
         Validate new password strength requirements for change
@@ -216,12 +216,12 @@ class ChangePasswordRequest(BaseModel):
             raise ValueError('New password must contain at least one special character')
         return v
 
-    @validator('confirm_new_password')
-    def new_passwords_match_change(cls, v, values):
+    @field_validator('confirm_new_password')
+    def new_passwords_match_change(cls, v, info):
         """
         Validate that new passwords match for change
         """
-        if 'new_password' in values and v != values['new_password']:
+        if info.data and 'new_password' in info.data and v != info.data['new_password']:
             raise ValueError('New passwords do not match')
         return v
 

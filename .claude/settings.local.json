@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"\nimport sys\nsys.path.insert\\(0, ''.''\\)\ntry:\n    import src.main\n    print\\(''Successfully imported src.main module''\\)\n    print\\(''Module attributes:'', [attr for attr in dir\\(src.main\\) if not attr.startswith\\(''_''\\)]\\)\nexcept Exception as e:\n    print\\(f''Error importing module: {e}''\\)\n    import traceback\n    traceback.print_exc\\(\\)\n\")",
+      "Bash(timeout 10 python3 -c \"\nimport sys\nsys.path.insert\\(0, ''.''\\)\ntry:\n    import src.main\n    print\\(''Successfully imported src.main module!''\\)\n    print\\(''App object exists:'', hasattr\\(src.main, ''app''\\)\\)\n    \n    # Try to run the app with uvicorn programmatically\n    import asyncio\n    import uvicorn\n    from src.main import app\n    \n    config = uvicorn.Config\\(app, host=''0.0.0.0'', port=8000, log_level=''info''\\)\n    server = uvicorn.Server\\(config\\)\n    \n    print\\(''Server configured successfully!''\\)\n    print\\(''Starting server in background...''\\)\n    \n    # Run briefly to check if it starts without errors\n    async def test_run\\(\\):\n        import threading\n        import time\n        \n        # Start server in a thread\n        def run_server\\(\\):\n            try:\n                server.run\\(\\)\n            except Exception as e:\n                print\\(f''Error in server thread: {e}''\\)\n        \n        thread = threading.Thread\\(target=run_server, daemon=True\\)\n        thread.start\\(\\)\n        \n        # Wait a bit then stop\n        await asyncio.sleep\\(3\\)\n        server.should_exit = True\n        print\\(''Server test completed''\\)\n    \n    asyncio.run\\(test_run\\(\\)\\)\n    \nexcept Exception as e:\n    print\\(f''Error: {e}''\\)\n    import traceback\n    traceback.print_exc\\(\\)\n\")",
+      "Bash(.venv/bin/python -m pip install pydantic-settings==2.1.0 --break-system-packages)",
+      "Bash(timeout 10 python3 -c \"\ntry:\n    import sys\n    sys.path.insert\\(0, ''/mnt/f/Phase-II_Full-Stack_Todo_Web_App/backend''\\)\n    import src.main\n    print\\(''SUCCESS: Successfully imported src.main module!''\\)\n    print\\(''App object exists:'', hasattr\\(src.main, ''app''\\)\\)\n    \nexcept Exception as e:\n    print\\(f''Error: {e}''\\)\n    import traceback\n    traceback.print_exc\\(\\)\n\")",
+      "Bash(python3 -c \"import pydantic_settings; print\\(''pydantic_settings imported successfully''\\)\")",
+      "Bash(pip3 install asyncpg --break-system-packages)",
+      "Bash(python3 -c \"\nimport sys\nsys.path.insert\\(0, ''.''\\)\nfrom src.main import app\nimport uvicorn\n\nif __name__ == ''__main__'':\n    uvicorn.run\\(app, host=''0.0.0.0'', port=8000, log_level=''info''\\)\n\")",
+      "Bash(source .venv/bin/activate)",
+      "Bash(python -c \"import sys; print\\(sys.path\\)\")",
+      "Bash(python src/main.py)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(npm run dev)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(pkill -f \"uvicorn.*src.main\")",
+      "Bash(PYTHONPATH=. uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(pkill -f \"uvicorn\")",
+      "Bash(PYTHONPATH=. python -c \"import src.main; print\\(''Import successful''\\)\")",
+      "Bash(pip install \"SQLAlchemy>=2.0.0,<2.1.0\" --force-reinstall)",
+      "Bash(uv pip install \"SQLAlchemy>=2.0.0,<2.1.0\")",
+      "Bash(uv pip install -r requirements.txt)",
+      "Bash(python -c \"import sys; print\\(sys.version\\); import src.main; print\\(''Import successful''\\)\")",
+      "Bash(pkill -f \"python\")",
+      "Bash(python3 integration_test.py)",
+      "Bash(python -c \"\ntry:\n    from sqlmodel import SQLModel, Field\n    from typing import Optional\n    \n    class UserBase\\(SQLModel\\):\n        email: str = Field\\(unique=True, index=True, nullable=False\\)\n        first_name: Optional[str] = Field\\(default=None, max_length=100\\)\n        last_name: Optional[str] = Field\\(default=None, max_length=100\\)\n    \n        class Config:\n            from_attributes = True\n    \n    print\\(''UserBase model defined successfully''\\)\nexcept Exception as e:\n    print\\(f''Error: {e}''\\)\n\")",
+      "Bash(python -c \"\ntry:\n    from sqlmodel import SQLModel, Field\n    from typing import Optional\n    \n    class UserBase\\(SQLModel\\):\n        email: str = Field\\(unique=True, index=True\\)\n        first_name: Optional[str] = Field\\(default=None, max_length=100\\)\n        last_name: Optional[str] = Field\\(default=None, max_length=100\\)\n    \n        class Config:\n            from_attributes = True\n    \n    print\\(''UserBase model defined successfully''\\)\nexcept Exception as e:\n    print\\(f''Error: {e}''\\)\n\")",
+      "Bash(python -c \"\ntry:\n    from sqlmodel import SQLModel, Field\n    from typing import Optional\n    \n    class UserBase\\(SQLModel\\):\n        email: str = Field\\(unique=True, index=True\\)\n        first_name: Optional[str] = Field\\(default=None, max_length=100\\)\n        last_name: Optional[str] = Field\\(default=None, max_length=100\\)\n    \n        class Config:\n            from_attributes = True\n            arbitrary_types_allowed = True\n    \n    print\\(''UserBase model defined successfully''\\)\nexcept Exception as e:\n    print\\(f''Error: {e}''\\)\n\")",
+      "Bash(python -c \"import src.main; print\\(''Main module imported successfully''\\)\")",
+      "Bash(uv pip install \"fastapi==0.95.2\")",
+      "Bash(uv pip install \"SQLAlchemy==1.4.46\")",
+      "Bash(uv pip install \"sqlmodel==0.0.8\" --force-reinstall)",
+      "Skill(sp.phr)"
+    ]
+  }
+}

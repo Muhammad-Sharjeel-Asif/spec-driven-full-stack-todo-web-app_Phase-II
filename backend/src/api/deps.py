@@ -2,7 +2,7 @@ from typing import AsyncGenerator, Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
-from better_apis.auth import verify_jwt_token
+from src.utils.jwt import validate_and_decode_token
 import logging
 
 from src.config.database import AsyncSessionLocal
@@ -49,16 +49,19 @@ async def get_current_user(
         token = credentials.credentials
 
         # Verify JWT token using Better Auth
-        token_payload = await verify_jwt_token(token)
+        token_data = validate_and_decode_token(token)
 
-        if not token_payload or "userId" not in token_payload:
+        # Extract user_id from token data
+        user_id = token_data.user_id if token_data else None
+
+        if not token_data:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        user_id = token_payload["userId"]
+        user_id = token_data.user_id
 
         # Query user from database
         user = await session.get(User, user_id)
@@ -102,18 +105,34 @@ async def get_optional_user(
 
     try:
         token = credentials.credentials
-        token_payload = await verify_jwt_token(token)
+        token_data = validate_and_decode_token(token)
 
-        if not token_payload or "userId" not in token_payload:
+        if not token_data:
             return None
 
-        user_id = token_payload["userId"]
+        user_id = token_data.user_id
         user = await session.get(User, user_id)
 
         return user
     except Exception as e:
         logger.warning(f"Failed to get optional user: {str(e)}")
         return None
+
+
+from src.services.task_service import TaskService
+
+
+async def get_task_service(session: AsyncSession = Depends(get_db_session)) -> TaskService:
+    """
+    Dependency function to get the task service with database session.
+
+    Args:
+        session: Database session for the task service
+
+    Returns:
+        TaskService: Instance of the task service with the database session
+    """
+    return TaskService(session)
 
 
 # Common dependency aliases

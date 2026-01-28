@@ -13,7 +13,7 @@ from ..config.settings import settings
 
 class TokenData(BaseModel):
     """Pydantic model for token data"""
-    username: Optional[str] = None
+    email: Optional[str] = None
 
 
 class AuthService:
@@ -75,29 +75,29 @@ class AuthService:
         """
         try:
             payload = jwt.decode(token, settings.BETTER_AUTH_SECRET, algorithms=["HS256"])
-            username: str = payload.get("sub")
-            if username is None:
+            email: str = payload.get("sub")
+            if email is None:
                 return None
-            token_data = TokenData(username=username)
+            token_data = TokenData(email=email)
             return token_data
         except jwt.PyJWTError:
             return None
 
     @staticmethod
-    def authenticate_user(username: str, password: str) -> Optional[User]:
+    def authenticate_user(email: str, password: str) -> Optional[User]:
         """
-        Authenticate a user by username and password
+        Authenticate a user by email and password
 
         Args:
-            username: Username to authenticate
+            email: Email to authenticate
             password: Plain text password to verify
 
         Returns:
             User object if authentication successful, None otherwise
         """
         with Session(engine) as session:
-            statement = select(User).where(User.username == username)
-            user = session.exec(statement).first()
+            statement = select(User).where(User.email == email)
+            user = session.execute(statement).first()
 
             if not user:
                 # Even though user doesn't exist, we still verify the password
@@ -111,12 +111,11 @@ class AuthService:
             return user
 
     @staticmethod
-    def register_user(username: str, email: str, password: str) -> User:
+    def register_user(email: str, password: str) -> User:
         """
         Register a new user with the provided credentials
 
         Args:
-            username: Desired username
             email: User's email address
             password: Plain text password
 
@@ -124,21 +123,12 @@ class AuthService:
             Created User object
 
         Raises:
-            HTTPException: If username or email already exists
+            HTTPException: If email already exists
         """
         with Session(engine) as session:
-            # Check if username already exists
-            statement = select(User).where(User.username == username)
-            existing_user = session.exec(statement).first()
-            if existing_user:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Username already registered"
-                )
-
             # Check if email already exists
             statement = select(User).where(User.email == email)
-            existing_email = session.exec(statement).first()
+            existing_email = session.execute(statement).first()
             if existing_email:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -148,7 +138,6 @@ class AuthService:
             # Create new user
             hashed_password = AuthService.hash_password(password)
             user = User(
-                username=username,
                 email=email,
                 hashed_password=hashed_password
             )
@@ -175,8 +164,8 @@ class AuthService:
             return None
 
         with Session(engine) as session:
-            statement = select(User).where(User.username == token_data.username)
-            user = session.exec(statement).first()
+            statement = select(User).where(User.email == token_data.email)
+            user = session.execute(statement).first()
             return user
 
 
