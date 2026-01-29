@@ -30,9 +30,13 @@ class Task(TaskBase, table=True):
     # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+    deleted_at: Optional[datetime] = Field(default=None)  # For soft deletes
 
     # Relationships
     owner: "User" = Relationship(back_populates="tasks")
+
+    # Notification settings stored as JSON
+    notification_settings: Optional[str] = Field(default='{"reminder_enabled": false, "reminder_time": null}')
 
     class Config:
         arbitrary_types_allowed = True
@@ -71,6 +75,7 @@ class TaskRead(TaskBase):
     version: int
     created_at: datetime
     updated_at: datetime
-    is_deleted: bool = False  # Soft delete flag
+    deleted_at: Optional[datetime] = None  # For soft deletes
+    notification_settings: Optional[str] = '{"reminder_enabled": false, "reminder_time": null}'
 
     model_config = ConfigDict(from_attributes=True)

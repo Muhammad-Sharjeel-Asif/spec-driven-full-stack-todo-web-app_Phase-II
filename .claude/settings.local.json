@@ -33,7 +33,16 @@
       "Bash(uv pip install \"fastapi==0.95.2\")",
       "Bash(uv pip install \"SQLAlchemy==1.4.46\")",
       "Bash(uv pip install \"sqlmodel==0.0.8\" --force-reinstall)",
-      "Skill(sp.phr)"
+      "Skill(sp.phr)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json --paths-only)",
+      "Bash(.specify/scripts/bash/setup-plan.sh --json)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json)",
+      "Bash(tree backend/src/)",
+      "Bash(dir F:/Phase-II_Full-Stack_Todo_Web_App/frontend/)",
+      "Bash(dir F:/Phase-II_Full-Stack_Todo_Web_App/backend/src/config/)",
+      "Bash(dir \"F:/Phase-II_Full-Stack_Todo_Web_App/specs/001-todo-resolution/checklists/\" /b)",
+      "Bash(find . -name \"*.md\" -exec grep -l \"\\\\[ \\\\]\" {} ;)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)"
     ]
   }
 }

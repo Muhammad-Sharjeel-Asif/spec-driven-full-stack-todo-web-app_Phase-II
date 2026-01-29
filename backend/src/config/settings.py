@@ -43,7 +43,20 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
     # CORS configuration
-    BACKEND_CORS_ORIGINS: str = "*"  # Comma-separated list of origins
+    BACKEND_CORS_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,https://localhost:3000"  # Comma-separated list of origins
+
+    @property
+    def ALLOWED_ORIGINS(self) -> list:
+        """Parse comma-separated CORS origins into a list."""
+        if self.BACKEND_CORS_ORIGINS == "*":
+            return ["*"]
+        return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",") if origin.strip()]
+
+    # SSL/HTTPS configuration
+    SSL_REDIRECT: bool = True
+    SECURE_SSL_REDIRECT: bool = True
+    SECURE_PROXY_SSL_HEADER: tuple = ("X-Forwarded-Proto", "https")
+    USE_HTTPS_INSTEAD_OF_SSL: bool = True
 
     class Config:
         env_file = ".env"

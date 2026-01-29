@@ -1,8 +1,9 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 import uuid
 from pydantic import ConfigDict
+import json
 
 
 class UserBase(SQLModel):
@@ -41,6 +42,10 @@ class User(UserBase, table=True):
 
     # Relationships
     tasks: list["Task"] = Relationship(back_populates="owner", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    auth_tokens: list["AuthenticationToken"] = Relationship(back_populates="user", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+
+    # Notification preferences stored as JSON
+    notification_preferences: Optional[str] = Field(default='{"due_date_reminders": true, "email_notifications": false}')
 
     def __str__(self) -> str:
         """String representation of the User."""
