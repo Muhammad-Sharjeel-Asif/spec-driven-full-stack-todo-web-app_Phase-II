@@ -24,34 +24,78 @@ else:
 
     # Convert database URL to asyncpg format if using PostgreSQL
     database_url = settings.DATABASE_URL
-    if database_url.startswith("postgresql://"):
+
+    # Initialize ssl_params for all database types
+    ssl_params = {}
+
+    if database_url.startswith("sqlite:///"):
+        # For SQLite, convert to async SQLite format
+        database_url = database_url.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
+    elif database_url.startswith("postgresql://"):
         database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+        # Parse URL and handle asyncpg-specific SSL settings (only for PostgreSQL)
+        from urllib.parse import urlparse, parse_qs, urlencode
+        parsed = urlparse(database_url)
+
+        # Extract query parameters and handle SSL settings for asyncpg
+        query_params = parse_qs(parsed.query)
+
+        # Handle sslmode specially for asyncpg
+        if 'sslmode' in query_params:
+            sslmode = query_params.pop('sslmode')[0]
+            # asyncpg uses ssl parameter instead of sslmode
+            if sslmode.lower() in ['require', 'prefer']:
+                ssl_params['ssl'] = True
+            elif sslmode.lower() == 'disable':
+                ssl_params['ssl'] = False
+
+        # Remove channel_binding parameter as it's not supported by asyncpg
+        query_params.pop('channel_binding', None)
+
+        # Reconstruct the URL without problematic parameters for asyncpg
+        new_query = urlencode(query_params, doseq=True)
+        database_url = parsed._replace(query=new_query).geturl()
     elif database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql+asyncpg://", 1)
 
-    # Parse URL and handle asyncpg-specific SSL settings
-    from urllib.parse import urlparse, parse_qs, urlencode
-    parsed = urlparse(database_url)
+        # Parse URL and handle asyncpg-specific SSL settings (only for PostgreSQL)
+        from urllib.parse import urlparse, parse_qs, urlencode
+        parsed = urlparse(database_url)
 
-    # Extract query parameters and handle SSL settings for asyncpg
-    query_params = parse_qs(parsed.query)
-    ssl_params = {}
+        # Extract query parameters and handle SSL settings for asyncpg
+        query_params = parse_qs(parsed.query)
 
-    # Handle sslmode specially for asyncpg
-    if 'sslmode' in query_params:
-        sslmode = query_params.pop('sslmode')[0]
-        # asyncpg uses ssl parameter instead of sslmode
-        if sslmode.lower() in ['require', 'prefer']:
-            ssl_params['ssl'] = True
-        elif sslmode.lower() == 'disable':
-            ssl_params['ssl'] = False
+        # Handle sslmode specially for asyncpg
+        if 'sslmode' in query_params:
+            sslmode = query_params.pop('sslmode')[0]
+            # asyncpg uses ssl parameter instead of sslmode
+            if sslmode.lower() in ['require', 'prefer']:
+                ssl_params['ssl'] = True
+            elif sslmode.lower() == 'disable':
+                ssl_params['ssl'] = False
 
-    # Remove channel_binding parameter as it's not supported by asyncpg
-    query_params.pop('channel_binding', None)
+        # Remove channel_binding parameter as it's not supported by asyncpg
+        query_params.pop('channel_binding', None)
 
-    # Reconstruct the URL without problematic parameters for asyncpg
-    new_query = urlencode(query_params, doseq=True)
-    database_url = parsed._replace(query=new_query).geturl()
+        # Reconstruct the URL without problematic parameters for asyncpg
+        new_query = urlencode(query_params, doseq=True)
+        database_url = parsed._replace(query=new_query).geturl()
+    else:
+        # For other database types, use the URL as-is
+        pass
+
+    # Set up connect_args based on database type
+    if database_url.startswith("postgresql+asyncpg://"):
+        connect_args = {
+            "server_settings": {
+                "application_name": "todo-backend-api",
+            },
+            **ssl_params
+        }
+    else:
+        # For SQLite and other databases, use minimal connect_args
+        connect_args = ssl_params if ssl_params else {}
 
     engine: AsyncEngine = create_async_engine(
         database_url,
@@ -61,12 +105,7 @@ else:
         pool_pre_ping=True,  # Verify connections before use
         pool_recycle=int(settings.DB_POOL_RECYCLE),  # Recycle connections after N seconds
         pool_timeout=int(settings.DB_POOL_TIMEOUT),
-        connect_args={
-            "server_settings": {
-                "application_name": "todo-backend-api",
-            },
-            **ssl_params
-        }
+        connect_args=connect_args
     )
 
 # Async session maker for database operations
